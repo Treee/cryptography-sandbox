@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Secret Ciphers</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <div class="div-column">
+      <label for="user-text">Enter Text To Encrypt/Decrypt</label>
+      <br />
+      <textarea id="user-text" rows="6" cols="100"></textarea>
+      <br />
+      <button id="btn-encrypt" onclick="encryptClick()">Encrypt</button>
+      <button id="btn-decrypt" onclick="decryptClick()">Decrypt</button>
+      <br />
+      <label for="result-text">Result</label>
+      <br />
+      <textarea id="result-text" rows="6" cols="100"></textarea>
+      <br />
+      <button id="btn-copy" onclick="copyToClipboard()">Copy</button>
+    </div>
+    <div class="div-column">
+      <input type="radio" id="morse" name="cipher-keys" value="morse" checked />
+      <label for="morse">Morse Code</label><br />
+      <input type="radio" id="custom" name="cipher-keys" value="custom" />
+      <label for="key-text">Cipher Key: </label>
+      <input id="key-text" type="text" />
+    </div>
+  </body>
+</html>
