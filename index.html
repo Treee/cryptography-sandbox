@@ -22,10 +22,23 @@
     </div>
     <div class="div-column">
       <input type="radio" id="morse" name="cipher-keys" value="morse" checked />
-      <label for="morse">Morse Code</label><br />
-      <input type="radio" id="custom" name="cipher-keys" value="custom" />
-      <label for="key-text">Cipher Key: </label>
-      <input id="key-text" type="text" />
+      <label for="morse">Morse Code</label>
+      <br />
+      <input type="radio" id="custom" name="cipher-keys" value="singlecaeser" />
+      <label for="single-key-text">Caeser Shift: </label>
+      <input
+        class="number-select"
+        id="single-key-text"
+        type="number"
+        max="26"
+        maxlength="2"
+        value="1"
+      />
+      <br />
+      <input type="radio" id="custom" name="cipher-keys" value="multicaeser" />
+      <label for="multi-key-text">Multi-Caeser Key: </label>
+      <input id="multi-key-text" type="text" size="5" />
+      <br />
     </div>
   </body>
 </html>

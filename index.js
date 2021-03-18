@@ -14,6 +14,9 @@ function copyToClipboard() {
   /* Copy the text inside the text field */
   document.execCommand("copy");
 }
+function populateResultElement(text) {
+  document.getElementById("result-text").value = text;
+}
 const BASE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 // . = ° \u00B0 and - = ¬ \u00AC
 const morseMap = {
@@ -68,7 +71,7 @@ function textToMorseCode(text) {
         .join(" ");
     })
     .join(morseCodeWordDelimiter);
-  document.getElementById("result-text").value = morseCode;
+  populateResultElement(morseCode);
 }
 
 function morseCodeToText(morseCode) {
@@ -83,28 +86,9 @@ function morseCodeToText(morseCode) {
         .join("");
     })
     .join(" ");
-  document.getElementById("result-text").value = decodedText;
+  populateResultElement(decodedText);
 }
 
-function encryptClick() {
-  const userText = document.getElementById("user-text").value;
-  const encryptionType = document.querySelector(
-    "input[name=cipher-keys]:checked"
-  ).value;
-
-  if (encryptionType === "morse") {
-    textToMorseCode(userText);
-  }
-}
-function decryptClick() {
-  const userText = document.getElementById("user-text").value;
-  const encryptionType = document.querySelector(
-    "input[name=cipher-keys]:checked"
-  ).value;
-  if (encryptionType === "morse") {
-    morseCodeToText(userText);
-  }
-}
 // test scripts
 // console.log(textToMorseCode("sos sos sos"));
 // console.log(textToMorseCode("testing a sample string"));
@@ -120,62 +104,88 @@ function decryptClick() {
 // const text_to_cipher = "ONE STEP CLOSER WELL DONE TO RECEEEVE THE NEXT MESSAGZ MEET THE MAN OF HERMES AT HIS PARADISE";
 // const text_to_cipher = "COLLECTIVE OPERATION ICHOR ACTIVATE GATHER NBC MASK FILTER BLOOD BAG";
 // const text_to_cipher = "SYRINGE TEST KIT MEET AT THE HIGHEST PEAK WAIT FOR THE SIGNAL";
-const text_to_cipher = "PORTLAND PROVIDES";
+// const text_to_cipher = "PORTLAND PROVIDES";
 // const text_to_cipher = "MEET THE MAN OF HERMES AT HIS PARADISE";
-const encode = true;
+// const encode = true;
 
-let ceaser_cipher_shift_keys = "038";
-const ceaser_cipher_shift_keys_reverse_indexs = [555];
-let cipher_shift_counter = 0; // this helps keep a distinct count so empty spaces don't mess up encryption/decryption
+// let ceaser_cipher_shift_keys = "038";
 
 let answer = "";
+function multiAlphabetCeaserCipher(
+  encode,
+  text_to_cipher,
+  ceaser_cipher_shift_keys
+) {
+  let cipher_shift_counter = 0; // this helps keep a distinct count so empty spaces don't mess up encryption/decryption
+  let answer = "";
+  for (let i = 0; i < text_to_cipher.length; i++) {
+    const base_index = BASE_ALPHABET.indexOf(text_to_cipher[i]);
+    if (base_index > -1) {
+      // based on the current encoded character, what is the ceaser cipher shift index to use
+      let rotating_ceaser_shift =
+        cipher_shift_counter % ceaser_cipher_shift_keys.length;
+      // select the index for the ceaser shifted alphabet to use
+      const ceaser_shifted_alphabet = parseInt(
+        ceaser_cipher_shift_keys[rotating_ceaser_shift]
+      );
 
-for (let i = 0; i < text_to_cipher.length; i++) {
-  const base_index = BASE_ALPHABET.indexOf(text_to_cipher[i]);
-  if (base_index > -1) {
-    const reverse_index = ceaser_cipher_shift_keys_reverse_indexs.find(
-      (value) => {
-        return value === i;
+      // the ceaser shift index that maps to the base index (the % at the end wraps the selection) (this is how we get to the real message)
+      // added a switch to allow for encoding and decoding.
+      let modified_shift_index =
+        (base_index - ceaser_shifted_alphabet) % BASE_ALPHABET.length;
+      if (encode) {
+        modified_shift_index =
+          (base_index + ceaser_shifted_alphabet) % BASE_ALPHABET.length;
       }
-    );
-    if (reverse_index !== undefined) {
-      ceaser_cipher_shift_keys = ceaser_cipher_shift_keys
-        .split("")
-        .reverse()
-        .join("");
-    }
-    // based on the current encoded character, what is the ceaser cipher shift index to use
-    let rotating_ceaser_shift =
-      cipher_shift_counter % ceaser_cipher_shift_keys.length;
-    // select the index for the ceaser shifted alphabet to use
-    const ceaser_shifted_alphabet = parseInt(
-      ceaser_cipher_shift_keys[rotating_ceaser_shift]
-    );
+      // wrap it in the negative direction (i think abs() can fix this somehow)
+      if (modified_shift_index < 0) {
+        modified_shift_index = BASE_ALPHABET.length + modified_shift_index;
+      }
+      // apply the shift to get the actual character
+      const shifted_letter = BASE_ALPHABET[modified_shift_index];
 
-    // the ceaser shift index that maps to the base index (the % at the end wraps the selection) (this is how we get to the real message)
-    // added a switch to allow for encoding and decoding.
-    let modified_shift_index =
-      (base_index - ceaser_shifted_alphabet) % BASE_ALPHABET.length;
-    if (encode) {
-      modified_shift_index =
-        (base_index + ceaser_shifted_alphabet) % BASE_ALPHABET.length;
+      answer = answer.concat(shifted_letter);
+      cipher_shift_counter++;
+      // console.log(
+      //   `Index: ${i} Ceaser Shift: ${rotating_ceaser_shift} Ceaser Key: ${ceaser_shifted_alphabet} BaseIndex: ${base_index} Cipher Letter: ${text_to_cipher[i]} shifted_letter: ${shifted_letter} modified_shift_index: ${modified_shift_index}`
+      // );
+    } else {
+      answer = answer.concat(" ");
+      // console.log(`Ceaser Shift: ? Ceaser Key: ? BaseIndex: ${base_index} Cipher Letter: ' ' shifted_letter: ? modified_shift_index: ?`);
     }
-    // wrap it in the negative direction (i think abs() can fix this somehow)
-    if (modified_shift_index < 0) {
-      modified_shift_index = BASE_ALPHABET.length + modified_shift_index;
-    }
-    // apply the shift to get the actual character
-    const shifted_letter = BASE_ALPHABET[modified_shift_index];
-
-    answer = answer.concat(shifted_letter);
-    cipher_shift_counter++;
-    // console.log(
-    //   `Index: ${i} Ceaser Shift: ${rotating_ceaser_shift} Ceaser Key: ${ceaser_shifted_alphabet} BaseIndex: ${base_index} Cipher Letter: ${text_to_cipher[i]} shifted_letter: ${shifted_letter} modified_shift_index: ${modified_shift_index}`
-    // );
-  } else {
-    answer = answer.concat(" ");
-    // console.log(`Ceaser Shift: ? Ceaser Key: ? BaseIndex: ${base_index} Cipher Letter: ' ' shifted_letter: ? modified_shift_index: ?`);
   }
+  populateResultElement(answer);
 }
 
+function encryptClick() {
+  const userText = document.getElementById("user-text").value;
+  const encryptionType = document.querySelector(
+    "input[name=cipher-keys]:checked"
+  ).value;
+
+  if (encryptionType === "morse") {
+    textToMorseCode(userText);
+  } else if (encryptionType === "singlecaeser") {
+    const multiCipherKey = document.getElementById("single-key-text").value;
+    multiAlphabetCeaserCipher(true, userText, multiCipherKey);
+  } else if (encryptionType === "multicaeser") {
+    const multiCipherKey = document.getElementById("multi-key-text").value;
+    multiAlphabetCeaserCipher(true, userText, multiCipherKey);
+  }
+}
+function decryptClick() {
+  const userText = document.getElementById("user-text").value;
+  const encryptionType = document.querySelector(
+    "input[name=cipher-keys]:checked"
+  ).value;
+  if (encryptionType === "morse") {
+    morseCodeToText(userText);
+  } else if (encryptionType === "singlecaeser") {
+    const multiCipherKey = document.getElementById("single-key-text").value;
+    multiAlphabetCeaserCipher(false, userText, multiCipherKey);
+  } else if (encryptionType === "multicaeser") {
+    const multiCipherKey = document.getElementById("multi-key-text").value;
+    multiAlphabetCeaserCipher(false, userText, multiCipherKey);
+  }
+}
 // console.log(answer);
