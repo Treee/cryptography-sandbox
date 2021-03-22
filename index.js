@@ -119,7 +119,7 @@ function multiAlphabetCeaserCipher(
   let cipher_shift_counter = 0; // this helps keep a distinct count so empty spaces don't mess up encryption/decryption
   let answer = "";
   for (let i = 0; i < text_to_cipher.length; i++) {
-    const base_index = BASE_ALPHABET.indexOf(text_to_cipher[i]);
+    const base_index = BASE_ALPHABET.indexOf(text_to_cipher[i].toUpperCase());
     if (base_index > -1) {
       // based on the current encoded character, what is the ceaser cipher shift index to use
       let rotating_ceaser_shift =
@@ -150,7 +150,7 @@ function multiAlphabetCeaserCipher(
       //   `Index: ${i} Ceaser Shift: ${rotating_ceaser_shift} Ceaser Key: ${ceaser_shifted_alphabet} BaseIndex: ${base_index} Cipher Letter: ${text_to_cipher[i]} shifted_letter: ${shifted_letter} modified_shift_index: ${modified_shift_index}`
       // );
     } else {
-      answer = answer.concat(" ");
+      answer = answer.concat(text_to_cipher[i]);
       // console.log(`Ceaser Shift: ? Ceaser Key: ? BaseIndex: ${base_index} Cipher Letter: ' ' shifted_letter: ? modified_shift_index: ?`);
     }
   }
