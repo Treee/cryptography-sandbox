@@ -22,10 +22,30 @@
       <button id="btn-copy" onclick="copyToClipboard()">Copy</button>
     </div>
     <div class="div-column">
-      <input type="radio" id="morse" name="cipher-keys" value="morse" checked />
-      <label for="morse">Morse Code</label>
+      <input
+        type="radio"
+        id="normal-morse"
+        name="cipher-keys"
+        value="normal-morse"
+        checked
+      />
+      <label for="morse">Normal Morse Code</label>
       <br />
-      <input type="radio" id="custom" name="cipher-keys" value="singlecaeser" />
+      <input
+        type="radio"
+        id="sexy-morse"
+        name="cipher-keys"
+        value="sexy-morse"
+        checked
+      />
+      <label for="morse">Sexy Morse Code</label>
+      <br />
+      <input
+        type="radio"
+        id="custom-single"
+        name="cipher-keys"
+        value="singlecaeser"
+      />
       <label for="single-key-text">Caeser Shift: </label>
       <input
         class="number-select"
@@ -36,7 +56,12 @@
         value="1"
       />
       <br />
-      <input type="radio" id="custom" name="cipher-keys" value="multicaeser" />
+      <input
+        type="radio"
+        id="custom-multi"
+        name="cipher-keys"
+        value="multicaeser"
+      />
       <label for="multi-key-text">Multi-Caeser Key: </label>
       <input id="multi-key-text" type="text" size="5" />
       <br />

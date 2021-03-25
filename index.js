@@ -57,31 +57,71 @@ const morseMap = {
   9: "\u00AC\u00AC\u00AC\u00AC\u00B0",
   0: "\u00AC\u00AC\u00AC\u00AC\u00AC",
 };
-const morseCodeWordDelimiter = "|";
+const normalMorseMap = {
+  A: ".-",
+  B: "-...",
+  C: "-.-.",
+  D: "-..",
+  E: ".",
+  F: "..-.",
+  G: "--.",
+  H: "....",
+  I: "..",
+  J: ".---",
+  K: "-.-",
+  L: ".-..",
+  M: "--",
+  N: "-.",
+  O: "---",
+  P: ".--.",
+  Q: "--.-",
+  R: ".-.",
+  S: "...",
+  T: "-",
+  U: "..-",
+  V: "...-",
+  W: ".--",
+  X: "-..-",
+  Y: "-.--",
+  Z: "--..",
+  1: ".----",
+  2: "..---",
+  3: "...--",
+  4: "....-",
+  5: ".....",
+  6: "-....",
+  7: "--...",
+  8: "---..",
+  9: "----.",
+  0: "-----",
+};
 
-function textToMorseCode(text) {
+const morseCodeWordDelimiter = "|";
+const normalMorseCodeWordDelimiter = " / ";
+
+function textToMorseCode(text, ditNdahMap, delimiter) {
   const morseCode = text
     .split(" ")
     .map((textPart) => {
       return textPart
         .split("")
         .map((character) => {
-          return morseMap[character.toUpperCase()];
+          return ditNdahMap[character.toUpperCase()];
         })
         .join(" ");
     })
-    .join(morseCodeWordDelimiter);
+    .join(delimiter);
   populateResultElement(morseCode);
 }
 
-function morseCodeToText(morseCode) {
+function morseCodeToText(morseCode, ditNdahMap, delimiter) {
   const decodedText = morseCode
-    .split(morseCodeWordDelimiter)
+    .split(delimiter)
     .map((textPart) => {
       return textPart
         .split(" ")
         .map((morseSegment) => {
-          return getKeyByValue(morseMap, morseSegment);
+          return getKeyByValue(ditNdahMap, morseSegment);
         })
         .join("");
     })
@@ -163,8 +203,10 @@ function encryptClick() {
     "input[name=cipher-keys]:checked"
   ).value;
 
-  if (encryptionType === "morse") {
-    textToMorseCode(userText);
+  if (encryptionType === "sexy-morse") {
+    textToMorseCode(userText, morseMap, morseCodeWordDelimiter);
+  } else if (encryptionType === "normal-morse") {
+    textToMorseCode(userText, normalMorseMap, normalMorseCodeWordDelimiter);
   } else if (encryptionType === "singlecaeser") {
     const multiCipherKey = document.getElementById("single-key-text").value;
     multiAlphabetCeaserCipher(true, userText, multiCipherKey);
@@ -178,8 +220,10 @@ function decryptClick() {
   const encryptionType = document.querySelector(
     "input[name=cipher-keys]:checked"
   ).value;
-  if (encryptionType === "morse") {
-    morseCodeToText(userText);
+  if (encryptionType === "sexy-morse") {
+    morseCodeToText(userText, morseMap, morseCodeWordDelimiter);
+  } else if (encryptionType === "normal-morse") {
+    morseCodeToText(userText, normalMorseMap, normalMorseCodeWordDelimiter);
   } else if (encryptionType === "singlecaeser") {
     const multiCipherKey = document.getElementById("single-key-text").value;
     multiAlphabetCeaserCipher(false, userText, multiCipherKey);
