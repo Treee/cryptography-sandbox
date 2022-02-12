@@ -153,11 +153,7 @@ function shiftSingleLetter(letter, shift, encode) {
   return shifted_letter;
 }
 
-function multiAlphabetCeaserCipher(
-  encode,
-  text_to_cipher,
-  ceaser_cipher_shift_keys
-) {
+function multiAlphabetCeaserCipher(encode, text_to_cipher, ceaser_cipher_shift_keys) {
   let cipher_shift_counter = 0; // this helps keep a distinct count so empty spaces don't mess up encryption/decryption
   let rotating_ceaser_shift = 0;
   let answer = "";
@@ -165,18 +161,12 @@ function multiAlphabetCeaserCipher(
     const base_index = BASE_ALPHABET.indexOf(text_to_cipher[i].toUpperCase());
     if (base_index > -1) {
       // based on the current encoded character, what is the ceaser cipher shift index to use
-      rotating_ceaser_shift =
-        cipher_shift_counter % ceaser_cipher_shift_keys.length;
+      rotating_ceaser_shift = cipher_shift_counter % ceaser_cipher_shift_keys.length;
 
       // select the index for the ceaser shifted alphabet to use
-      const ceaser_shifted_alphabet =
-        ceaser_cipher_shift_keys[rotating_ceaser_shift];
+      const ceaser_shifted_alphabet = ceaser_cipher_shift_keys[rotating_ceaser_shift];
 
-      let shifted_letter = shiftSingleLetter(
-        text_to_cipher[i],
-        ceaser_shifted_alphabet,
-        encode
-      );
+      let shifted_letter = shiftSingleLetter(text_to_cipher[i], ceaser_shifted_alphabet, encode);
 
       answer = answer.concat(shifted_letter);
       cipher_shift_counter++;
@@ -191,9 +181,7 @@ function multiAlphabetCeaserCipher(
 
 function encryptClick() {
   const userText = document.getElementById("user-text").value;
-  const encryptionType = document.querySelector(
-    "input[name=cipher-keys]:checked"
-  ).value;
+  const encryptionType = document.querySelector("input[name=cipher-keys]:checked").value;
 
   if (encryptionType === "sexy-morse") {
     textToMorseCode(userText, morseMap, morseCodeWordDelimiter);
@@ -209,16 +197,14 @@ function encryptClick() {
 }
 function decryptClick() {
   const userText = document.getElementById("user-text").value;
-  const encryptionType = document.querySelector(
-    "input[name=cipher-keys]:checked"
-  ).value;
+  const encryptionType = document.querySelector("input[name=cipher-keys]:checked").value;
   if (encryptionType === "sexy-morse") {
     morseCodeToText(userText, morseMap, morseCodeWordDelimiter);
   } else if (encryptionType === "normal-morse") {
     morseCodeToText(userText, normalMorseMap, normalMorseCodeWordDelimiter);
   } else if (encryptionType === "singlecaeser") {
     const multiCipherKey = document.getElementById("single-key-text").value;
-    multiAlphabetCeaserCipher(false, userText, multiCipherKey);
+    multiAlphabetCeaserCipher(false, userText, BASE_ALPHABET[multiCipherKey]);
   } else if (encryptionType === "multicaeser") {
     const multiCipherKey = document.getElementById("multi-key-text").value;
     multiAlphabetCeaserCipher(false, userText, multiCipherKey);
@@ -229,57 +215,26 @@ function checkValues(actualResult, expectedResult, origin) {
   if (actualResult === expectedResult) {
     console.log(`Test: Encryption Succeeded on ${origin} --> ${actualResult}`);
   } else {
-    console.log(
-      `Test: Encryption Failed on ${origin} --> ${actualResult} \n Expected: ${expectedResult}`
-    );
+    console.log(`Test: Encryption Failed on ${origin} --> ${actualResult} \n Expected: ${expectedResult}`);
   }
 }
 
 function myTests() {
   let originalMessage = "SOS";
-  let modifiedMessage = textToMorseCode(
-    originalMessage,
-    normalMorseMap,
-    normalMorseCodeWordDelimiter
-  );
+  let modifiedMessage = textToMorseCode(originalMessage, normalMorseMap, normalMorseCodeWordDelimiter);
   checkValues(modifiedMessage, "... --- ...", originalMessage);
 
   originalMessage = "SOS";
-  modifiedMessage = textToMorseCode(
-    originalMessage,
-    morseMap,
-    morseCodeWordDelimiter
-  );
-  checkValues(
-    modifiedMessage,
-    "\u00B0\u00B0\u00B0 \u00AC\u00AC\u00AC \u00B0\u00B0\u00B0",
-    originalMessage
-  );
+  modifiedMessage = textToMorseCode(originalMessage, morseMap, morseCodeWordDelimiter);
+  checkValues(modifiedMessage, "\u00B0\u00B0\u00B0 \u00AC\u00AC\u00AC \u00B0\u00B0\u00B0", originalMessage);
 
   originalMessage = "this is a test for my tool";
-  modifiedMessage = textToMorseCode(
-    originalMessage,
-    normalMorseMap,
-    normalMorseCodeWordDelimiter
-  );
-  checkValues(
-    modifiedMessage,
-    "- .... .. ... / .. ... / .- / - . ... - / ..-. --- .-. / -- -.-- / - --- --- .-..",
-    originalMessage
-  );
+  modifiedMessage = textToMorseCode(originalMessage, normalMorseMap, normalMorseCodeWordDelimiter);
+  checkValues(modifiedMessage, "- .... .. ... / .. ... / .- / - . ... - / ..-. --- .-. / -- -.-- / - --- --- .-..", originalMessage);
 
-  originalMessage =
-    "- .... .. ... / .. ... / .- / - . ... - / ..-. --- .-. / -- -.-- / - --- --- .-..";
-  modifiedMessage = morseCodeToText(
-    originalMessage,
-    normalMorseMap,
-    normalMorseCodeWordDelimiter
-  );
-  checkValues(
-    modifiedMessage,
-    "this is a test for my tool".toUpperCase(),
-    originalMessage
-  );
+  originalMessage = "- .... .. ... / .. ... / .- / - . ... - / ..-. --- .-. / -- -.-- / - --- --- .-..";
+  modifiedMessage = morseCodeToText(originalMessage, normalMorseMap, normalMorseCodeWordDelimiter);
+  checkValues(modifiedMessage, "this is a test for my tool".toUpperCase(), originalMessage);
 
   originalMessage = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   modifiedMessage = multiAlphabetCeaserCipher(true, originalMessage, "b");
@@ -287,21 +242,12 @@ function myTests() {
 
   originalMessage = "THIS MESSAGE SHOULD BE SHIFTED BY 3";
   modifiedMessage = multiAlphabetCeaserCipher(true, originalMessage, "d");
-  checkValues(
-    modifiedMessage,
-    "WKLV PHVVDJH VKRXOG EH VKLIWHG EB 3",
-    originalMessage
-  );
+  checkValues(modifiedMessage, "WKLV PHVVDJH VKRXOG EH VKLIWHG EB 3", originalMessage);
   originalMessage = "WKLV PHVVDJH VKRXOG EH VKLIWHG EB 3";
   modifiedMessage = multiAlphabetCeaserCipher(false, modifiedMessage, "d");
-  checkValues(
-    modifiedMessage,
-    "THIS MESSAGE SHOULD BE SHIFTED BY 3",
-    originalMessage
-  );
+  checkValues(modifiedMessage, "THIS MESSAGE SHOULD BE SHIFTED BY 3", originalMessage);
 
-  originalMessage =
-    "ZOHYHPQ SLLV AKL HE...IVXY PLQ, AKYHL ZVPLQ; HZHUL...WOHF PHUJK AZV EF WDR. AKLB DLSO ZRVQ RQVZ DKF...WOULH NULDA ELDZWZ IVOSRD WOHPU ZLE...VPA MDSO, URUH DLSO SLCH.";
+  originalMessage = "ZOHYHPQ SLLV AKL HE...IVXY PLQ, AKYHL ZVPLQ; HZHUL...WOHF PHUJK AZV EF WDR. AKLB DLSO ZRVQ RQVZ DKF...WOULH NULDA ELDZWZ IVOSRD WOHPU ZLE...VPA MDSO, URUH DLSO SLCH.";
   modifiedMessage = multiAlphabetCeaserCipher(false, originalMessage, "dh");
   checkValues(
     modifiedMessage,
@@ -309,34 +255,17 @@ function myTests() {
     originalMessage
   );
 
-  originalMessage =
-    "Wherein lies the ex...Four men, three women; aware...They march two by two. They will soon know why...Three great beasts follow their six...six fall, none will live.";
+  originalMessage = "Wherein lies the ex...Four men, three women; aware...They march two by two. They will soon know why...Three great beasts follow their six...six fall, none will live.";
   modifiedMessage = multiAlphabetCeaserCipher(true, originalMessage, "dh");
-  checkValues(
-    modifiedMessage,
-    "ZOHYHPQ SLLV AKL HE...IVXY PLQ, AKYHL ZVPLQ; HZHUL...WOHF PHUJK AZV EF WDR. AKLB DLSO ZRVQ RQVZ DKF...WOULH NULDA ELDZWZ IVOSRD WOHPU ZLE...VPA MDSO, URUH DLSO SLCH.",
-    originalMessage
-  );
+  checkValues(modifiedMessage, "ZOHYHPQ SLLV AKL HE...IVXY PLQ, AKYHL ZVPLQ; HZHUL...WOHF PHUJK AZV EF WDR. AKLB DLSO ZRVQ RQVZ DKF...WOULH NULDA ELDZWZ IVOSRD WOHPU ZLE...VPA MDSO, URUH DLSO SLCH.", originalMessage);
 
   originalMessage = "zvze cf wkgkuht d sicfc xhe qzbbru";
-  modifiedMessage = multiAlphabetCeaserCipher(
-    false,
-    originalMessage,
-    "gormund"
-  );
-  checkValues(
-    modifiedMessage,
-    "this is testing a multi key cipher".toUpperCase(),
-    originalMessage
-  );
+  modifiedMessage = multiAlphabetCeaserCipher(false, originalMessage, "gormund");
+  checkValues(modifiedMessage, "this is testing a multi key cipher".toUpperCase(), originalMessage);
 
   originalMessage = "this is testing a multi key cipher";
   modifiedMessage = multiAlphabetCeaserCipher(true, originalMessage, "gormund");
-  checkValues(
-    modifiedMessage,
-    "zvze cf wkgkuht d sicfc xhe qzbbru".toUpperCase(),
-    originalMessage
-  );
+  checkValues(modifiedMessage, "zvze cf wkgkuht d sicfc xhe qzbbru".toUpperCase(), originalMessage);
 }
 
 myTests();
