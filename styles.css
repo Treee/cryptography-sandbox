@@ -1,6 +1,73 @@
-.div-column {
-  display: inline-block;
+body {
+  display: inline-flex;
+  width: 99%;
+  margin: 0;
+  padding: 0.5rem;
 }
+
+.width-icon {
+  width: fit-content;
+  margin-right: 0.25rem;
+}
+
+.width-90 {
+  width: 90%;
+}
+
+.btn-copy-hover:hover {
+  background-color: rgba(128, 128, 128, 0.419);
+  cursor: pointer;
+}
+.btn-delete-hover:hover {
+  background-color: rgba(255, 0, 0, 0.194);
+  cursor: pointer;
+}
+
+.div-column {
+  display: inline-flex;
+  flex-direction: column;
+  width: 33%;
+}
+.div-column-attributes {
+  display: inline-flex;
+  width: 20%;
+  flex-direction: column;
+}
+.div-column-history {
+  display: inline-flex;
+  width: 47%;
+  height: 95vh;
+  flex-direction: column;
+  overflow-y: scroll;
+}
+
+.historical-card {
+  display: inline-flex;
+  flex-direction: row;
+  border: black solid 1px;
+  margin: 0.25rem;
+  padding: 0.25rem;
+}
+.historical-card-column {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.historical-card-buttons {
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.historical-card-attributes {
+  display: inline-flex;
+  flex-direction: row;
+}
+.historical-card-attribute {
+  display: inline-flex;
+  flex-direction: row;
+  margin-right: 0.25rem;
+}
+
 .number-select {
   width: 3rem;
 }

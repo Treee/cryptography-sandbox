@@ -4,68 +4,51 @@
     <title>Secret Ciphers</title>
     <link rel="shortcut icon" href="./favicon.ico" />
     <link rel="stylesheet" href="./styles.css" />
-    <script src="index.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
   </head>
   <body>
-    <div class="div-column">
+    <div class="div-column" id="column-text">
       <label for="user-text">Enter Text To Encrypt/Decrypt</label>
       <br />
       <textarea id="user-text" rows="6" cols="100"></textarea>
       <br />
-      <button id="btn-encrypt" onclick="encryptClick()">Encrypt</button>
-      <button id="btn-decrypt" onclick="decryptClick()">Decrypt</button>
+      <div>
+        <button id="btn-encrypt" onclick="encryptClick(true)">Encrypt</button>
+        <button id="btn-decrypt" onclick="decryptClick(true)">Decrypt</button>
+      </div>
       <br />
       <label for="result-text">Result</label>
       <br />
       <textarea id="result-text" rows="6" cols="100"></textarea>
       <br />
-      <button id="btn-copy" onclick="copyToClipboard()">Copy</button>
+      <div>
+        <button id="btn-copy" onclick="copyToClipboard()">Copy</button>
+      </div>
     </div>
-    <div class="div-column">
-      <input
-        type="radio"
-        id="normal-morse"
-        name="cipher-keys"
-        value="normal-morse"
-        checked
-      />
-      <label for="morse">Normal Morse Code</label>
-      <br />
-      <input
-        type="radio"
-        id="sexy-morse"
-        name="cipher-keys"
-        value="sexy-morse"
-        checked
-      />
-      <label for="morse">Sexy Morse Code</label>
-      <br />
-      <input
-        type="radio"
-        id="custom-single"
-        name="cipher-keys"
-        value="singlecaeser"
-      />
-      <label for="single-key-text">Caeser Shift: </label>
-      <input
-        class="number-select"
-        id="single-key-text"
-        type="number"
-        max="26"
-        maxlength="2"
-        value="1"
-      />
-      <br />
-      <input
-        type="radio"
-        id="custom-multi"
-        name="cipher-keys"
-        value="multicaeser"
-      />
-      <label for="multi-key-text">Vigenere Key: </label>
-      <input id="multi-key-text" type="text" size="5" />
-      <span>Use letters</span>
-      <br />
+    <div class="div-column-attributes" id="column-attributes">
+      <div>
+        <input type="radio" id="normal-morse" name="cipher-keys" value="normal-morse" checked />
+        <label for="normal-morse">Normal Morse Code</label>
+      </div>
+      <div>
+        <input type="radio" id="sexy-morse" name="cipher-keys" value="sexy-morse" checked />
+        <label for="sexy-morse">Sexy Morse Code</label>
+      </div>
+      <div>
+        <input type="radio" id="custom-single" name="cipher-keys" value="singlecaeser" />
+        <label for="single-key-text">Caeser Shift: </label>
+        <input class="number-select" id="single-key-text" type="number" max="26" maxlength="2" value="1" />
+      </div>
+      <div>
+        <input type="radio" id="custom-multi" name="cipher-keys" value="multicaeser" />
+        <label for="multi-key-text">Vigenere Key: </label>
+        <input id="multi-key-text" type="text" size="5" />
+        <span>Use letters</span>
+      </div>
     </div>
+    <div class="div-column-history" id="column-history"></div>
   </body>
+  <footer>
+    <script src="index.js"></script>
+  </footer>
 </html>

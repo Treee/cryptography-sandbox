@@ -1,3 +1,6 @@
+const BASE_STORAGE_KEY = "base_storage";
+let BASE_STORAGE = {};
+
 function getKeyByValue(object, value) {
   return Object.keys(object).find((key) => {
     // console.log(`value of key: ${object[key]} key: ${key} value: ${value}`);
@@ -17,6 +20,114 @@ function copyToClipboard() {
 function populateResultElement(text) {
   if (document.getElementById("result-text")) {
     document.getElementById("result-text").value = text;
+  }
+}
+function initializeStorage() {
+  BASE_STORAGE = JSON.parse(localStorage.getItem(BASE_STORAGE_KEY)) || {};
+  if (!BASE_STORAGE.hasOwnProperty("history")) {
+    BASE_STORAGE.history = [];
+  }
+  saveStorage();
+}
+function saveStorage(reload) {
+  localStorage.setItem(BASE_STORAGE_KEY, JSON.stringify(BASE_STORAGE));
+  if (reload) {
+    // location.reload();
+    document.getElementById("column-history").replaceChildren();
+    fillHistory();
+  }
+}
+function fillHistory() {
+  let historicalCard;
+  let historyDiv, historyUserAction, historyEncryptionDiv, historyCipherKey, historyText, buttonDiv;
+  let cardColDiv1, cardColDiv2, cardColDiv3;
+  let copyBtn, deleteBtn;
+  if (document.getElementById("column-history")) {
+    historyDiv = document.getElementById("column-history");
+
+    BASE_STORAGE.history.forEach((element) => {
+      historicalCard = document.createElement("div");
+      historicalCard.classList.add("historical-card");
+
+      const attributesDiv = document.createElement("div");
+      attributesDiv.classList.add("historical-card-attributes");
+
+      historyUserAction = document.createElement("div");
+      historyUserAction.classList.add("historical-card-attribute");
+      historyUserAction.innerText = `${element.type}:`;
+
+      historyEncryptionDiv = document.createElement("div");
+      historyEncryptionDiv.classList.add("historical-card-attribute");
+      historyEncryptionDiv.innerText = `${element.encryptionType}: `;
+
+      historyCipherKey = document.createElement("div");
+      historyCipherKey.classList.add("historical-card-attribute");
+      historyCipherKey.innerText = element.hasCipherKey === "" ? `No Shift` : `shift: ${element.hasCipherKey}`;
+
+      attributesDiv.appendChild(historyUserAction);
+      attributesDiv.appendChild(historyEncryptionDiv);
+      attributesDiv.appendChild(historyCipherKey);
+
+      historyText = document.createElement("div");
+      historyText.classList.add("historical-card-attribute");
+      historyText.innerText = element.userText;
+
+      buttonDiv = document.createElement("div");
+      buttonDiv.classList.add("historical-card-buttons");
+
+      copyBtn = document.createElement("i");
+      copyBtn.classList.add("material-icons", "btn-copy-hover");
+      copyBtn.innerText = "content_copy";
+      copyBtn.addEventListener("click", function () {
+        document.getElementById("user-text").value = element.userText;
+        if (element.encryptionType === "singlecaeser") {
+          document.getElementById("custom-single").checked = true;
+          document.getElementById("single-key-text").value = element.hasCipherKey;
+        } else if (element.encryptionType === "multicaeser") {
+          document.getElementById("custom-multi").checked = true;
+          document.getElementById("multi-key-text").value = element.hasCipherKey;
+        } else if (element.encryptionType === "normal-morse") {
+          document.getElementById("normal-morse").checked = true;
+        } else if (element.encryptionType === "sexy-morse") {
+          document.getElementById("sexy-morse").checked = true;
+        }
+        if (element.type === "encrypt") {
+          encryptClick(false);
+        } else if (element.type === "decrypt") {
+          decryptClick(false);
+        }
+      });
+
+      deleteBtn = document.createElement("i");
+      deleteBtn.classList.add("material-icons", "btn-delete-hover");
+      deleteBtn.innerText = "delete_forever";
+      const elementIdToRemove = element.id;
+      deleteBtn.addEventListener("click", function () {
+        BASE_STORAGE.history = BASE_STORAGE.history.filter((element) => {
+          return element.id !== elementIdToRemove;
+        });
+        saveStorage(true);
+      });
+
+      cardColDiv1 = document.createElement("div");
+      cardColDiv1.classList.add("historical-card-column", "width-icon");
+      cardColDiv1.appendChild(copyBtn);
+
+      cardColDiv2 = document.createElement("div");
+      cardColDiv2.classList.add("historical-card-column", "width-90");
+      cardColDiv2.appendChild(attributesDiv);
+      cardColDiv2.appendChild(historyText);
+
+      cardColDiv3 = document.createElement("div");
+      cardColDiv3.classList.add("historical-card-column", "width-icon");
+      cardColDiv3.appendChild(deleteBtn);
+
+      historicalCard.appendChild(cardColDiv1);
+      historicalCard.appendChild(cardColDiv2);
+      historicalCard.appendChild(cardColDiv3);
+
+      historyDiv.prepend(historicalCard);
+    });
   }
 }
 const BASE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -179,35 +290,44 @@ function multiAlphabetCeaserCipher(encode, text_to_cipher, ceaser_cipher_shift_k
   return answer;
 }
 
-function encryptClick() {
+function encryptClick(saveData) {
   const userText = document.getElementById("user-text").value;
   const encryptionType = document.querySelector("input[name=cipher-keys]:checked").value;
-
+  let multiCipherKey = "";
   if (encryptionType === "sexy-morse") {
     textToMorseCode(userText, morseMap, morseCodeWordDelimiter);
   } else if (encryptionType === "normal-morse") {
     textToMorseCode(userText, normalMorseMap, normalMorseCodeWordDelimiter);
   } else if (encryptionType === "singlecaeser") {
-    const multiCipherKey = document.getElementById("single-key-text").value;
+    multiCipherKey = document.getElementById("single-key-text").value;
     multiAlphabetCeaserCipher(true, userText, BASE_ALPHABET[multiCipherKey]);
   } else if (encryptionType === "multicaeser") {
-    const multiCipherKey = document.getElementById("multi-key-text").value;
+    multiCipherKey = document.getElementById("multi-key-text").value;
     multiAlphabetCeaserCipher(true, userText, multiCipherKey);
   }
+  if (saveData) {
+    BASE_STORAGE.history.push({ id: crypto.randomUUID(), userText, encryptionType, hasCipherKey: multiCipherKey, type: "encrypt" });
+    saveStorage(true);
+  }
 }
-function decryptClick() {
+function decryptClick(saveData) {
   const userText = document.getElementById("user-text").value;
   const encryptionType = document.querySelector("input[name=cipher-keys]:checked").value;
+  let multiCipherKey = "";
   if (encryptionType === "sexy-morse") {
     morseCodeToText(userText, morseMap, morseCodeWordDelimiter);
   } else if (encryptionType === "normal-morse") {
     morseCodeToText(userText, normalMorseMap, normalMorseCodeWordDelimiter);
   } else if (encryptionType === "singlecaeser") {
-    const multiCipherKey = document.getElementById("single-key-text").value;
+    multiCipherKey = document.getElementById("single-key-text").value;
     multiAlphabetCeaserCipher(false, userText, BASE_ALPHABET[multiCipherKey]);
   } else if (encryptionType === "multicaeser") {
-    const multiCipherKey = document.getElementById("multi-key-text").value;
+    multiCipherKey = document.getElementById("multi-key-text").value;
     multiAlphabetCeaserCipher(false, userText, multiCipherKey);
+  }
+  if (saveData) {
+    BASE_STORAGE.history.push({ id: crypto.randomUUID(), userText, encryptionType, hasCipherKey: multiCipherKey, type: "decrypt" });
+    saveStorage(true);
   }
 }
 
@@ -269,3 +389,5 @@ function myTests() {
 }
 
 myTests();
+initializeStorage();
+fillHistory();
